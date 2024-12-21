@@ -28,13 +28,11 @@ public class Task8 {
         .map(Person::id)
         .collect(Collectors.toSet()));
 
-    Set<PersonWithResumes> personsWithResumes = persons.stream()
+    return persons.stream()
         .map(person -> new PersonWithResumes(
             person, resumes.stream()
             .filter(resume -> resume.personId() == person.id())
             .collect(Collectors.toSet())))
         .collect(Collectors.toSet());
-
-    return personsWithResumes;
   }
 }
