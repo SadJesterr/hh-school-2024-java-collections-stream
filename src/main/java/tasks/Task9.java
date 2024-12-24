@@ -21,36 +21,42 @@ P.P.S Здесь ваши правки необходимо прокоммент
  */
 public class Task9 {
 
-  private long count;
+//  private long count;
+//  P.S убрана переменная count, больше негде использовать
 
   // Костыль, эластик всегда выдает в топе "фальшивую персону".
   // Конвертируем начиная со второй
+  // P.S. вместо удаления персоны из списка возможно стоит использовать subList
+  // P.S. добавлен отлов person = null
   public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
+    if (persons == null || persons.size() == 0) {
       return Collections.emptyList();
     }
-    persons.remove(0);
-    return persons.stream().map(Person::firstName).collect(Collectors.toList());
+    return persons.subList(1, persons.size())
+        .stream()
+        .map(Person::firstName)
+        .collect(Collectors.toList());
   }
 
   // Зачем-то нужны различные имена этих же персон (без учета фальшивой разумеется)
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+//    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+//    P.S. .distinct не нужен, потому что toSet всё равно сделает множество
+//    P.S.S кажется конструкция слишком громоздкая, возможно переписать
+    return new HashSet<>(getNames(persons));
   }
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
+  // P.S. переписано на StringBuilder, потому что при многократном использовании мы можем выиграть в скорости работы
   public String convertPersonToString(Person person) {
     String result = "";
-    if (person.secondName() != null) {
-      result += person.secondName();
-    }
-
-    if (person.firstName() != null) {
-      result += " " + person.firstName();
-    }
-
-    if (person.secondName() != null) {
-      result += " " + person.secondName();
+    if (person.secondName() != null ||
+        person.firstName() != null ||
+        person.middleName() != null) {
+      result =  String.format("%s %s %s",
+          person.secondName(),
+          person.firstName(),
+          person.middleName());
     }
     return result;
   }
@@ -67,28 +73,28 @@ public class Task9 {
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
+//  P.S. добавлен возврат значения has если нашли совпадения
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
     for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
+      if (persons2.contains(persons1)) {
+        return true;
       }
     }
-    return has;
+    return false;
   }
 
   // Посчитать число четных чисел
+  // P.S. Убрана переменная count, по сути можно не вводить лишнюю переменную и сразу возвращать количество
   public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
+    return numbers.filter(num -> num % 2 == 0).count();
   }
 
   // Загадка - объясните почему assert тут всегда верен
   // Пояснение в чем соль - мы перетасовали числа, обернули в HashSet, а toString() у него вернул их в сортированном порядке
-  void listVsSet() {
+  // если вызвать .equals у snapshot и set, то будет False (у них разный тип)
+  // у set и snapshot совпадают ссылки на числа (например на число 1 ссылка @811 у обоих)
+  // и из-за этого происходит совпадение последовательности чисел при вызове toString
+  static void listVsSet() {
     List<Integer> integers = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
     List<Integer> snapshot = new ArrayList<>(integers);
     Collections.shuffle(integers);
