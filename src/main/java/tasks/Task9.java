@@ -26,12 +26,16 @@ public class Task9 {
 
   // Костыль, эластик всегда выдает в топе "фальшивую персону".
   // Конвертируем начиная со второй
+  // P.S. вместо удаления персоны из списка возможно стоит использовать subList
+  // P.S. добавлен отлов person = null
   public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
+    if (persons == null || persons.size() == 0) {
       return Collections.emptyList();
     }
-    persons.remove(0);
-    return persons.stream().map(Person::firstName).collect(Collectors.toList());
+    return persons.subList(1, persons.size())
+        .stream()
+        .map(Person::firstName)
+        .collect(Collectors.toList());
   }
 
   // Зачем-то нужны различные имена этих же персон (без учета фальшивой разумеется)
