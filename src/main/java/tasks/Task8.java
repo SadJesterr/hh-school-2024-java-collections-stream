@@ -33,7 +33,7 @@ public class Task8 {
 
     return persons.stream()
         .map(person -> new PersonWithResumes(
-            person, resumesMap.get(person.id())))
-        .collect(Collectors.toSet());
+            person, resumesMap.getOrDefault(person.id(), null)))
+        .collect(Collectors.toCollection(HashSet::new));
   }
 }

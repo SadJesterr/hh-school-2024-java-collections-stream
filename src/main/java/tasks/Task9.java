@@ -88,6 +88,8 @@ public class Task9 {
   // Загадка - объясните почему assert тут всегда верен
   // Пояснение в чем соль - мы перетасовали числа, обернули в HashSet, а toString() у него вернул их в сортированном порядке
   // если вызвать .equals у snapshot и set, то будет False (у них разный тип)
+  // у set и snapshot совпадают ссылки на числа (например на число 1 ссылка @811 у обоих)
+  // и из-за этого происходит совпадение последовательности чисел при вызове toString
   static void listVsSet() {
     List<Integer> integers = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
     List<Integer> snapshot = new ArrayList<>(integers);
