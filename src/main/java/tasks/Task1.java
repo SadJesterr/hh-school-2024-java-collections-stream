@@ -2,10 +2,11 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /*
 Задача 1
@@ -22,10 +23,14 @@ public class Task1 {
     this.personService = personService;
   }
 
-//  Асимптотическая сложность O(nlog(n))
+  // Если я правильно понял, то сделав словарь, можно ускорить работу то O(n)
+  // т.е. для каждого id человека мы получаем из словаря за O(1) и сохраняем тот же порядок
   public List<Person> findOrderedPersons(List<Integer> personIds) {
-    Set<Person> persons = personService.findPersons(personIds);
-    return persons.stream().sorted(Comparator.comparingInt(
-        Person -> personIds.indexOf(Person.id()))).toList();
+    Map<Integer, Person> persons = personService.findPersons(personIds)
+        .stream().collect(Collectors.toMap(Person::id, person -> person));
+
+    return personIds.stream()
+        .map(persons::get)
+        .collect(Collectors.toList());
   }
 }

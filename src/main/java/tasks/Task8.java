@@ -4,9 +4,8 @@ import common.Person;
 import common.PersonService;
 import common.PersonWithResumes;
 import common.Resume;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,11 +27,13 @@ public class Task8 {
         .map(Person::id)
         .collect(Collectors.toSet()));
 
+    Map<Integer, Set<Resume>> resumesMap = resumes.stream()
+        .collect(Collectors
+            .groupingBy(Resume::personId, Collectors.toSet()));
+
     return persons.stream()
         .map(person -> new PersonWithResumes(
-            person, resumes.stream()
-            .filter(resume -> resume.personId() == person.id())
-            .collect(Collectors.toSet())))
+            person, resumesMap.get(person.id())))
         .collect(Collectors.toSet());
   }
 }

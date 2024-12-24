@@ -45,25 +45,16 @@ public class Task9 {
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   // P.S. переписано на StringBuilder, потому что при многократном использовании мы можем выиграть в скорости работы
   public String convertPersonToString(Person person) {
-    StringBuilder result = new StringBuilder();
-    if (person.secondName() != null) {
-      result.append(person.secondName());
+    String result = "";
+    if (person.secondName() != null ||
+        person.firstName() != null ||
+        person.middleName() != null) {
+      result =  String.format("%s %s %s",
+          person.secondName(),
+          person.firstName(),
+          person.middleName());
     }
-
-    if (person.firstName() != null) {
-      if (!result.isEmpty()) {
-        result.append(" ");
-      }
-      result.append(person.firstName());
-    }
-
-    if (person.secondName() != null) {
-      if (!result.isEmpty()) {
-        result.append(" ");
-      }
-      result.append(person.secondName());
-    }
-    return result.toString();
+    return result;
   }
 
   // словарь id персоны -> ее имя
@@ -80,16 +71,12 @@ public class Task9 {
   // есть ли совпадающие в двух коллекциях персоны?
 //  P.S. добавлен возврат значения has если нашли совпадения
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
     for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-          return has;
-        }
+      if (persons2.contains(persons1)) {
+        return true;
       }
     }
-    return has;
+    return false;
   }
 
   // Посчитать число четных чисел
@@ -100,9 +87,7 @@ public class Task9 {
 
   // Загадка - объясните почему assert тут всегда верен
   // Пояснение в чем соль - мы перетасовали числа, обернули в HashSet, а toString() у него вернул их в сортированном порядке
-//  P.S. содержание set и integers одинаковое, порядок один и тот же,
-  // если вызвать .equals у snapshot и set, то будет False (у них разный тип), но
-  // т.к. мы приводим их к строке, то set становится похожим на snapshot по содержимому и типу
+  // если вызвать .equals у snapshot и set, то будет False (у них разный тип)
   static void listVsSet() {
     List<Integer> integers = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
     List<Integer> snapshot = new ArrayList<>(integers);
